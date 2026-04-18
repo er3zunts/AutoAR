@@ -55,6 +55,8 @@ WORKDIR /app
 # --- Runtime stage: minimal Debian image ---
 FROM debian:bookworm-slim
 
+# Personal note: I mount my own results directory via -v /home/me/ar-results:/app/new-results
+# so AUTOAR_RESULTS_DIR here is just the in-container default fallback.
 ENV AUTOAR_SCRIPT_PATH=/usr/local/bin/autoar \
     AUTOAR_CONFIG_FILE=/app/autoar.yaml \
     AUTOAR_RESULTS_DIR=/app/new-results
@@ -66,6 +68,4 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl ca-certificates tini jq dnsutils libpcap0.8 \
     postgresql-client \
-    openjdk-17-jre-headless unzip \
-    python3 python3-pip sqlmap nmap \
-    && rm -rf /var/lib/apt
+    openjdk-17-jre
