@@ -62,13 +62,10 @@ ENV AUTOAR_SCRIPT_PATH=/usr/local/bin/autoar \
 WORKDIR /app
 
 # System deps for runtime and common tools (including Java + unzip for jadx and apktool)
+# Note: removed docker.io to reduce image size; I run the host Docker socket via -v instead
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl ca-certificates tini jq dnsutils libpcap0.8 \
-    postgresql-client docker.io \
+    postgresql-client \
     openjdk-17-jre-headless unzip \
     python3 python3-pip sqlmap nmap \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install jadx decompiler for apkX analysis
-RUN set -eux; \
-    JADX_
+    && rm -rf /var/lib/apt
