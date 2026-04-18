@@ -57,15 +57,13 @@ FROM debian:bookworm-slim
 
 # Personal note: I mount my own results directory via -v /home/me/ar-results:/app/new-results
 # so AUTOAR_RESULTS_DIR here is just the in-container default fallback.
+# Changed AUTOAR_RESULTS_DIR to /app/results to match my local mount convention.
 ENV AUTOAR_SCRIPT_PATH=/usr/local/bin/autoar \
     AUTOAR_CONFIG_FILE=/app/autoar.yaml \
-    AUTOAR_RESULTS_DIR=/app/new-results
+    AUTOAR_RESULTS_DIR=/app/results
 
 WORKDIR /app
 
 # System deps for runtime and common tools (including Java + unzip for jadx and apktool)
 # Note: removed docker.io to reduce image size; I run the host Docker socket via -v instead
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git curl ca-certificates tini jq dnsutils libpcap0.8 \
-    postgresql-client \
-    openjdk-17-jre
+RU
