@@ -58,12 +58,14 @@ FROM debian:bookworm-slim
 # Personal note: I mount my own results directory via -v /home/me/ar-results:/app/new-results
 # so AUTOAR_RESULTS_DIR here is just the in-container default fallback.
 # Changed AUTOAR_RESULTS_DIR to /app/results to match my local mount convention.
+# Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
+# while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
 ENV AUTOAR_SCRIPT_PATH=/usr/local/bin/autoar \
     AUTOAR_CONFIG_FILE=/app/autoar.yaml \
-    AUTOAR_RESULTS_DIR=/app/results
+    AUTOAR_RESULTS_DIR=/app/results \
+    AUTOAR_LOG_LEVEL=debug
 
 WORKDIR /app
 
 # System deps for runtime and common tools (including Java + unzip for jadx and apktool)
-# Note: removed docker.io to reduce image size; I run the host Docker socket via -v instead
-RU
+# Note: removed d
