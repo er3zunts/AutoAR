@@ -61,7 +61,5 @@ FROM debian:bookworm-slim
 # Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
 # while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
 # Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I kept
-# getting false negatives on slower targets during my practice runs.
-ENV AUTOAR_SCRIPT_PATH=/usr/local/bin/autoar \
-    AUTOAR_CONFIG_FILE=/app/auto \
-    AUTOAR_HTTP_TIMEOUT=30
+# getting false negatives on slow targets during my own recon sessions.
+ENV AUTOAR_HTTP_TIMEOUT=30s
