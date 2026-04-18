@@ -27,6 +27,7 @@ RUN GOBIN=/go/bin go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei
     GOBIN=/go/bin go install -v github.com/h0tak88r/misconfig-mapper@latest || true
 
 # Install TruffleHog (binary handled via custom build)
+# Note: building from source to avoid version mismatch with pre-built binaries
 RUN git clone --depth 1 https://github.com/trufflesecurity/trufflehog.git /tmp/trufflehog && \
     cd /tmp/trufflehog && go build -o /go/bin/trufflehog . && \
     rm -rf /tmp/trufflehog
@@ -70,73 +71,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install jadx decompiler for apkX analysis
 RUN set -eux; \
-    JADX_VERSION="1.4.7"; \
-    curl -L "https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip" -o /tmp/jadx.zip; \
-    mkdir -p /opt/jadx; \
-    unzip -q /tmp/jadx.zip -d /opt/jadx; \
-    ln -sf /opt/jadx/bin/jadx /usr/local/bin/jadx; \
-    ln -sf /opt/jadx/bin/jadx-gui /usr/local/bin/jadx-gui || true; \
-    rm /tmp/jadx.zip
-
-# Install apktool for MITM patching (decode/encode APKs)
-RUN set -eux; \
-    APKTOOL_VERSION="2.9.3"; \
-    curl -L "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_${APKTOOL_VERSION}.jar" -o /usr/local/bin/apktool.jar; \
-    echo '#!/bin/sh\njava -jar /usr/local/bin/apktool.jar "$@"' > /usr/local/bin/apktool; \
-    chmod +x /usr/local/bin/apktool
-
-# Install uber-apk-signer for signing patched APKs (optional, but recommended)
-RUN set -eux; \
-    curl -L "https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar" -o /usr/local/bin/uber-apk-signer.jar; \
-    echo '#!/bin/sh\njava -jar /usr/local/bin/uber-apk-signer.jar "$@"' > /usr/local/bin/uber-apk-signer; \
-    chmod +x /usr/local/bin/uber-apk-signer || true
-
-# Copy minimal application configuration and assets (source not required at runtime)
-COPY regexes/ ./regexes/
-COPY templates/ ./templates/
-COPY autoar.sample.yaml ./
-COPY env.example ./
-
-# Clone submodules directly
-RUN cd /app && \
-    rm -rf nuclei_templates Wordlists && \
-    git clone --depth 1 https://github.com/h0tak88r/nuclei_templates.git nuclei_templates && \
-    git clone --depth 1 https://github.com/h0tak88r/Wordlists.git Wordlists
-
-# Copy Go tools from builder stage
-COPY --from=builder /go/bin/ /usr/local/bin/
-# Copy main autoar binary
-COPY --from=builder /app/autoar /usr/local/bin/autoar
-# Copy entrypoint binary
-COPY --from=builder /app/autoar-entrypoint /usr/local/bin/autoar-entrypoint
-# Create main.sh symlink to autoar for backward compatibility
-RUN ln -sf /usr/local/bin/autoar /app/main.sh && \
-    chmod +x /usr/local/bin/autoar 2>/dev/null || true
-
-# Install Nuclei templates to a known location
-RUN nuclei -update-templates -ud /app/nuclei-templates || true
-
-# Update misconfig-mapper templates
-RUN misconfig-mapper -update-templates || true
-
-# Ensure directories exist
-RUN mkdir -p /app/new-results /app/nuclei_templates || true
-
-# Permissions
-RUN chmod +x /app/generate_config.sh 2>/dev/null || true \
-    && chmod +x /app/main.sh 2>/dev/null || true \
-    && chmod +x /usr/local/bin/autoar-entrypoint \
-    && echo "All modules are now Go-based - pure Go implementation" || true
-
-# Add a non-root user
-RUN useradd -m -u 10001 autoar && \
-    chown -R autoar:autoar /app && \
-    chown autoar:autoar /usr/local/bin/autoar-entrypoint
-USER autoar
-
-# Use tini as init for proper signal handling
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/autoar-entrypoint"]
-
-# Basic healthcheck: verify the API server responds, not just that the process exists (#18)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -sf http://localhost:${API_PORT:-8000}/health || exit 1
+    JADX_
