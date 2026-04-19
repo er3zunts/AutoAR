@@ -67,7 +67,8 @@ func Load() (*Config, error) {
 
 		// Bumped default concurrency from 10 to 5 to be less noisy on smaller targets
 		Concurrency: parseInt(os.Getenv("CONCURRENCY"), 5),
-		Timeout:     parseInt(os.Getenv("TIMEOUT"), 30),
+		// Increased default timeout to 60s - 30s was too short for slow targets I test against
+		Timeout:     parseInt(os.Getenv("TIMEOUT"), 60),
 		Verbose:     parseBool(os.Getenv("VERBOSE"), false),
 		DryRun:      parseBool(os.Getenv("DRY_RUN"), false),
 	}
@@ -98,8 +99,5 @@ func (c *Config) Validate() error {
 
 // HasNotifier returns true if at least one notification channel is configured.
 func (c *Config) HasNotifier() bool {
-	return c.DiscordWebhook != "" || c.SlackWebhook != "" ||
-		(c.TelegramToken != "" && c.TelegramChatID != "")
+	return c.DiscordWebhook != "" || c.SlackWebhook != "" || c.TelegramToken != ""
 }
-
-// Targets returns a slice of target domains from TARGET_DO
