@@ -61,5 +61,4 @@ FROM debian:bookworm-slim
 # Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
 # while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
 # Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I kept
-# getting false negatives on slow targets. 30s feels like a good balance for my use.
-ENV AUTOAR_HTTP_TIMEOUT=30s
+# getting false negatives on slow targets in my home lab. Override with -e if needed.
