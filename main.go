@@ -46,7 +46,8 @@ func main() {
 		target     = flag.String("target", "", "Target domain or program to scan")
 		programsFile = flag.String("programs", "", "File containing list of programs/targets")
 		continuous  = flag.Bool("continuous", false, "Run in continuous monitoring mode")
-		interval   = flag.Int("interval", 3600, "Interval in seconds between scans (continuous mode)")
+		// Increased default interval to 2 hours to be less aggressive on targets
+		interval   = flag.Int("interval", 7200, "Interval in seconds between scans (continuous mode)")
 	)
 	flag.Parse()
 
