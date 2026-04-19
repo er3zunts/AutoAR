@@ -61,5 +61,9 @@ FROM debian:bookworm-slim
 # Changed AUTOAR_RESULTS_DIR to /app/results to match my local mount convention.
 # Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
 # while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
-# Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I kept
-# getting false negatives on slower targets when I first started using this tool.
+
+# Install runtime dependencies
+# python3 needed for some recon scripts; dnsutils gives us dig for quick DNS checks
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates dnsutils python3 \
+    && rm -rf /var/lib/apt/lists/*
