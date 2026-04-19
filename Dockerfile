@@ -6,6 +6,7 @@ FROM golang:1.26-bookworm AS builder
 WORKDIR /app
 
 # Install system packages required for building tools
+# Note: libpcap-dev is required for naabu (port scanner uses raw packets)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl build-essential cmake libpcap-dev ca-certificates \
     pkg-config libssl-dev \
@@ -61,5 +62,4 @@ FROM debian:bookworm-slim
 # Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
 # while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
 # Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I kept
-# getting false negatives on slower targets. 30s feels like a good balance for my use.
-ENV AUTOAR_HTTP_TIMEOUT=30s
+# getting false negatives on slower targets when I first started using this tool.
