@@ -62,9 +62,11 @@ func Load() (*Config, error) {
 		EnableAmass:     parseBool(os.Getenv("ENABLE_AMASS"), true),
 		EnableNuclei:    parseBool(os.Getenv("ENABLE_NUCLEI"), true),
 		EnableHTTPX:     parseBool(os.Getenv("ENABLE_HTTPX"), true),
-		EnableGau:       parseBool(os.Getenv("ENABLE_GAU"), false),
+		// Enabling gau by default since it's useful for finding hidden endpoints
+		EnableGau:       parseBool(os.Getenv("ENABLE_GAU"), true),
 
-		Concurrency: parseInt(os.Getenv("CONCURRENCY"), 10),
+		// Bumped default concurrency from 10 to 5 to be less noisy on smaller targets
+		Concurrency: parseInt(os.Getenv("CONCURRENCY"), 5),
 		Timeout:     parseInt(os.Getenv("TIMEOUT"), 30),
 		Verbose:     parseBool(os.Getenv("VERBOSE"), false),
 		DryRun:      parseBool(os.Getenv("DRY_RUN"), false),
@@ -100,50 +102,4 @@ func (c *Config) HasNotifier() bool {
 		(c.TelegramToken != "" && c.TelegramChatID != "")
 }
 
-// Targets returns a slice of target domains from TARGET_DOMAIN or SCOPE_FILE.
-func (c *Config) Targets() ([]string, error) {
-	if c.TargetDomain != "" {
-		return strings.Split(c.TargetDomain, ","), nil
-	}
-	data, err := os.ReadFile(c.ScopeFile)
-	if err != nil {
-		return nil, err
-	}
-	var targets []string
-	for _, line := range strings.Split(strings.TrimSpace(string(data)), "\n") {
-		line = strings.TrimSpace(line)
-		if line != "" && !strings.HasPrefix(line, "#") {
-			targets = append(targets, line)
-		}
-	}
-	return targets, nil
-}
-
-func getEnvOrDefault(key, defaultVal string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return defaultVal
-}
-
-func parseBool(val string, defaultVal bool) bool {
-	if val == "" {
-		return defaultVal
-	}
-	b, err := strconv.ParseBool(val)
-	if err != nil {
-		return defaultVal
-	}
-	return b
-}
-
-func parseInt(val string, defaultVal int) int {
-	if val == "" {
-		return defaultVal
-	}
-	i, err := strconv.Atoi(val)
-	if err != nil {
-		return defaultVal
-	}
-	return i
-}
+// Targets returns a slice of target domains from TARGET_DO
