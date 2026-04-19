@@ -84,13 +84,19 @@ func main() {
 
 // loadConfig reads configuration from environment variables
 func loadConfig() *Config {
+	// Use home directory for storage so results persist across reboots unlike /tmp
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		homeDir = "/tmp"
+	}
+
 	cfg := &Config{
 		TelegramBotToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
 		TelegramChatID:   os.Getenv("TELEGRAM_CHAT_ID"),
 		DiscordWebhook:   os.Getenv("DISCORD_WEBHOOK"),
 		SlackWebhook:     os.Getenv("SLACK_WEBHOOK"),
-		WorkDir:          getEnvOrDefault("WORK_DIR", "/tmp/autoar"),
-		OutputDir:        getEnvOrDefault("OUTPUT_DIR", "/tmp/autoar/output"),
+		WorkDir:          getEnvOrDefault("WORK_DIR", homeDir+"/autoar"),
+		OutputDir:        getEnvOrDefault("OUTPUT_DIR", homeDir+"/autoar/output"),
 		SubfinderPath:    getEnvOrDefault("SUBFINDER_PATH", "subfinder"),
 		AmassPath:        getEnvOrDefault("AMASS_PATH", "amass"),
 		NucleiPath:       getEnvOrDefault("NUCLEI_PATH", "nuclei"),
