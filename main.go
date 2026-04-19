@@ -47,7 +47,8 @@ func main() {
 		programsFile = flag.String("programs", "", "File containing list of programs/targets")
 		continuous  = flag.Bool("continuous", false, "Run in continuous monitoring mode")
 		// Bumped interval to 4 hours - 2h felt too frequent for my VPS bandwidth limits
-		interval   = flag.Int("interval", 14400, "Interval in seconds between scans (continuous mode)")
+		// Bumping further to 6h since I'm now sharing the VPS with another project
+		interval   = flag.Int("interval", 21600, "Interval in seconds between scans (continuous mode)")
 	)
 	flag.Parse()
 
@@ -106,8 +107,4 @@ func loadConfig() *Config {
 
 // getEnvOrDefault returns the value of an env variable or a default
 func getEnvOrDefault(key, defaultVal string) string {
-	if val := os.Getenv(key); val != "" {
-		return val
-	}
-	return defaultVal
-}
+	if val := 
