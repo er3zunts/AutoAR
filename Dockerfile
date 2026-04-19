@@ -60,5 +60,6 @@ FROM debian:bookworm-slim
 # Changed AUTOAR_RESULTS_DIR to /app/results to match my local mount convention.
 # Personal note: set AUTOAR_LOG_LEVEL=debug by default so I can see verbose output
 # while learning/testing; easy to override at runtime with -e AUTOAR_LOG_LEVEL=info
-# Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I kept
-# getting false negatives on slow targets in my home lab. Override with -e if needed.
+# Personal note: bumped AUTOAR_HTTP_TIMEOUT from default 10s to 30s because I keep
+# hitting timeouts on slower targets. Works much better for me in practice.
+ENV AUTOAR_HTTP_TIMEOUT=30s
